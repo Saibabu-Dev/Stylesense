@@ -60,7 +60,7 @@ window.deleteItem = function(id) {
 // ==========================================
 
 // ⚠️ IMPORTANT: DELETE "PASTE_YOUR_BASE64_TEXT_HERE" AND PASTE YOUR LONG BASE64 TEXT INSIDE THE QUOTES
-const ENCODED_API_KEY = "PASTE_YOUR_BASE64_TEXT_HERE"; 
+const ENCODED_API_KEY = "QVEuQWI4Uk42SzhOZUR5RU9FaGNfQ1h5UEcwUEJYWWR4T1JUanFxM0dSZmZyOXVJeHlXcmc="; 
 
 // This decodes it back to the real API key when the app runs
 const GEMINI_API_KEY = atob(ENCODED_API_KEY);
