@@ -60,7 +60,7 @@ window.deleteItem = function(id) {
 // ==========================================
 
 // ⚠️ IMPORTANT: PASTE YOUR API KEY INSIDE THE QUOTES BELOW
-const GEMINI_API_KEY = "AQ.Ab8RN6IJqikQo2BZlNmWQdql6oFxMZecXl90qAqO1CuRZLpItQ"; 
+const GEMINI_API_KEY = "AQ.Ab8RN6K8NeDyEOEhc_CXyPG0PBXYdxORTjqq3GRffr9uIxyWrg"; 
 
 // Helper function to call Gemini AI
 async function callGeminiAI(prompt) {
