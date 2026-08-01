@@ -60,14 +60,7 @@ window.deleteItem = function(id) {
 // 3. REAL GEMINI AI INTEGRATION (FINAL SAFE MODE)
 // ==========================================
 
-let GEMINI_API_KEY = "";
 
-try {
-  // ⚠️ CRITICAL: Paste the FULL, LONG Base64 string here. NO ".." allowed!
-  const ENCODED_API_KEY = "QVEuQWI4Uk42SzhOZUR5RU9FaGNfQ1h5UEcwUEJYWWR4T1JUanFxM0dSZmZyOXVJeHlXcmc="; 
-  
-  // This decodes it back to the real API key
-  GEMINI_API_KEY = atob(ENCODED_API_KEY);
 } catch (error) {
   console.error("Base64 decoding failed.", error);
 }
