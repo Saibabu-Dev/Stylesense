@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>StyleSense</title>
+        <link rel="stylesheet" href="style.css" />
+        </head>
+        <body>
+
+        <header>
+          <h1>StyleSense</h1>
+            <p>AI Fashion Assistant</p>
+            </header>
+
+            <nav>
+              <button class="tab-btn active" data-tab="home">Home</button>
+                <button class="tab-btn" data-tab="wardrobe">Wardrobe</button>
+                  <button class="tab-btn" data-tab="outfit">Outfit</button>
+                    <button class="tab-btn" data-tab="stylist">AI Stylist</button>
+                    </nav>
+
+                    <main>
+
+                      <!-- HOME TAB -->
+                        <section id="home" class="tab active">
+                            <div class="card">
+                                  <h2>Welcome to StyleSense!</h2>
+                                        <p>Start by adding your clothes in the Wardrobe tab.</p>
+                                            </div>
+                                              </section>
+
+                                                <!-- WARDROBE TAB -->
+                                                  <section id="wardrobe" class="tab">
+                                                      <div class="card">
+                                                            <h2>Add Clothing Item</h2>
+                                                                  <form id="itemForm">
+                                                                          <input id="itemName" placeholder="Item name (e.g., Blue Shirt)" required />
+                                                                                  <select id="itemCategory" required>
+                                                                                            <option value="">Select category</option>
+                                                                                                      <option value="shirt">Shirt</option>
+                                                                                                                <option value="tshirt">T-Shirt</option>
+                                                                                                                          <option value="pants">Pants</option>
+                                                                                                                                    <option value="jeans">Jeans</option>
+                                                                                                                                              <option value="shoes">Shoes</option>
+                                                                                                                                                        <option value="jacket">Jacket</option>
+                                                                                                                                                                </select>
+                                                                                                                                                                        <button type="submit">Save Item</button>
+                                                                                                                                                                              </form>
+                                                                                                                                                                                  </div>
+                                                                                                                                                                                      <div class="card">
+                                                                                                                                                                                            <h2>My Wardrobe</h2>
+                                                                                                                                                                                                  <div id="wardrobeList"></div>
+                                                                                                                                                                                                      </div>
+                                                                                                                                                                                                        </section>
+
+                                                                                                                                                                                                          <!-- OUTFIT TAB -->
+                                                                                                                                                                                                            <section id="outfit" class="tab">
+                                                                                                                                                                                                                <div class="card">
+                                                                                                                                                                                                                      <h2>AI Outfit Suggestion</h2>
+                                                                                                                                                                                                                            <button id="suggestBtn">Suggest Outfit</button>
+                                                                                                                                                                                                                                  <div id="outfitResult"></div>
+                                                                                                                                                                                                                                      </div>
+                                                                                                                                                                                                                                        </section>
+
+                                                                                                                                                                                                                                          <!-- AI STYLIST TAB -->
+                                                                                                                                                                                                                                            <section id="stylist" class="tab">
+                                                                                                                                                                                                                                                <div class="card">
+                                                                                                                                                                                                                                                      <h2>Ask AI Stylist</h2>
+                                                                                                                                                                                                                                                            <textarea id="stylistQuestion" placeholder="What should I wear for an interview?"></textarea>
+                                                                                                                                                                                                                                                                  <button id="askBtn">Ask</button>
+                                                                                                                                                                                                                                                                        <p id="stylistAnswer">Answer will appear here.</p>
+                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                              </section>
+
+                                                                                                                                                                                                                                                                              </main>
+
+                                                                                                                                                                                                                                                                              <script src="app.js"></script>
+
+                                                                                                                                                                                                                                                                              </body>
+                                                                                                                                                                                                                                                                              </html>
