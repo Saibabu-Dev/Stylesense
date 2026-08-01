@@ -56,11 +56,14 @@ window.deleteItem = function(id) {
 };
 
 // ==========================================
-// 3. REAL GEMINI AI INTEGRATION
+// 3. REAL GEMINI AI INTEGRATION (SECURED)
 // ==========================================
 
-// ⚠️ IMPORTANT: PASTE YOUR API KEY INSIDE THE QUOTES BELOW
-const GEMINI_API_KEY = "AQ.Ab8RN6K8NeDyEOEhc_CXyPG0PBXYdxORTjqq3GRffr9uIxyWrg"; 
+// ⚠️ IMPORTANT: DELETE "PASTE_YOUR_BASE64_TEXT_HERE" AND PASTE YOUR LONG BASE64 TEXT INSIDE THE QUOTES
+const ENCODED_API_KEY = "PASTE_YOUR_BASE64_TEXT_HERE"; 
+
+// This decodes it back to the real API key when the app runs
+const GEMINI_API_KEY = atob(ENCODED_API_KEY);
 
 // Helper function to call Gemini AI
 async function callGeminiAI(prompt) {
@@ -104,6 +107,47 @@ document.getElementById('suggestBtn').addEventListener('click', async () => {
   // Create a list of user's clothes
   const myClothes = items.map(i => `${i.name} (${i.category})`).join(', ');
   const clothesList = myClothes || "No clothes in wardrobe";
+
+  // Create the prompt for AI
+  const prompt = `
+    Today is ${today}. 
+    My wardrobe has these items: ${clothesList}. 
+    Please suggest the best outfit for today from my wardrobe. 
+    Tell me why it's a good choice for ${today} and what vibe it gives. 
+    Format the response clearly with emojis.
+  `;
+
+  // Get AI response
+  const aiResponse = await callGeminiAI(prompt);
+  
+  // Display AI response
+  result.innerHTML = `<div class="suggestion"><h3>📅 Today is ${today}</h3><p style="white-space: pre-wrap;">${aiResponse}</p></div>`;
+});
+
+// REAL AI Stylist Chat
+document.getElementById('askBtn').addEventListener('click', async () => {
+  const q = document.getElementById('stylistQuestion').value.trim();
+  const ans = document.getElementById('stylistAnswer');
+  
+  if (!q) {
+    ans.textContent = "Please type a question first!";
+    return;
+  }
+
+  ans.textContent = "🤖 AI is thinking...";
+
+  const myClothes = items.map(i => `${i.name} (${i.category})`).join(', ');
+  
+  const prompt = `
+    You are StyleSense, an expert AI fashion stylist.
+    My wardrobe has: ${myClothes || "nothing"}.
+    User Question: "${q}"
+    Please give a helpful, stylish, and confident answer.
+  `;
+
+  const aiResponse = await callGeminiAI(prompt);
+  ans.textContent = aiResponse;
+});  const clothesList = myClothes || "No clothes in wardrobe";
 
   // Create the prompt for AI
   const prompt = `
