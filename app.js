@@ -56,25 +56,29 @@ window.deleteItem = function(id) {
 };
 
 // ==========================================
-// 3. REAL GEMINI AI INTEGRATION (SAFE MODE)
+// ==========================================
+// 3. REAL GEMINI AI INTEGRATION (FINAL SAFE MODE)
 // ==========================================
 
 let GEMINI_API_KEY = "";
 
 try {
-  // ⚠️ IMPORTANT: DELETE "PASTE_YOUR_BASE64_TEXT_HERE" AND PASTE YOUR LONG BASE64 TEXT INSIDE THE QUOTES
+  // ⚠️ CRITICAL: Paste the FULL, LONG Base64 string here. NO ".." allowed!
   const ENCODED_API_KEY = "QVEuQWI4Uk42SzhOZUR5RU9FaGNfQ1h5UEcwUEJYWWR4T1JUanFxM0dSZmZyOXVJeHlXcmc="; 
   
-  // This decodes it back to the real API key when the app runs
+  // This decodes it back to the real API key
   GEMINI_API_KEY = atob(ENCODED_API_KEY);
 } catch (error) {
-  console.error("Base64 decoding failed. Tabs will still work, but AI won't.", error);
+  console.error("Base64 decoding failed.", error);
 }
 
 // Helper function to call Gemini AI
 async function callGeminiAI(prompt) {
-  if (!GEMINI_API_KEY) {
-    return "️ AI Key is missing or invalid. Please check the code.";
+  // Debug check: Tell us what the app actually sees
+  const keyPreview = GEMINI_API_KEY ? GEMINI_API_KEY.substring(0, 10) + "..." : "EMPTY";
+  
+  if (!GEMINI_API_KEY || !GEMINI_API_KEY.startsWith("AIzaSy")) {
+    return `🚫 Invalid Key! The app reads the key starting as: "${keyPreview}". It MUST start with "AIzaSy". Please check your Base64 text.`;
   }
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
@@ -91,7 +95,7 @@ async function callGeminiAI(prompt) {
     const text = await response.text();
     
     if (!response.ok) {
-      return `🚫 API Error (Status ${response.status}): ${text}`;
+      return `🚫 API Error (Status ${response.status}): The key starting with "${keyPreview}" is invalid or was deleted by Google.`;
     }
     
     const data = JSON.parse(text);
@@ -139,7 +143,7 @@ document.getElementById('askBtn').addEventListener('click', async () => {
     return;
   }
 
-  ans.textContent = " AI is thinking...";
+  ans.textContent = "🤖 AI is thinking...";
 
   const myClothes = items.map(i => `${i.name} (${i.category})`).join(', ');
   
