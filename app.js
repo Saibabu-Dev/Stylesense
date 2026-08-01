@@ -64,7 +64,7 @@ const GEMINI_API_KEY = "AQ.Ab8RN6IJqikQo2BZlNmWQdql6oFxMZecXl90qAqO1CuRZLpItQ";
 
 // Helper function to call Gemini AI
 async function callGeminiAI(prompt) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
   
   try {
     const response = await fetch(url, {
@@ -74,10 +74,22 @@ async function callGeminiAI(prompt) {
         contents: [{ parts: [{ text: prompt }] }]
       })
     });
-    const data = await response.json();
-    return data.candidates[0].content.parts[0].text;
+    
+    const text = await response.text();
+    
+    if (!response.ok) {
+      return `🚫 API Error (Status ${response.status}): ${text}`;
+    }
+    
+    const data = JSON.parse(text);
+    
+    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
+      return data.candidates[0].content.parts[0].text;
+    } else {
+      return `❌ Unexpected response: ${text}`;
+    }
   } catch (error) {
-    return "AI Error: Please check your API key or internet connection.";
+    return `❌ Network Error: ${error.message}`;
   }
 }
 
