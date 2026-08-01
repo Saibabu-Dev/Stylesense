@@ -1,4 +1,4 @@
-// 1. Tab Switching Logic
+// 1. Tab Switching Logic (First, so it always works)
 const tabs = document.querySelectorAll('.tab-btn');
 const sections = document.querySelectorAll('.tab');
 
@@ -56,17 +56,27 @@ window.deleteItem = function(id) {
 };
 
 // ==========================================
-// 3. REAL GEMINI AI INTEGRATION (SECURED)
+// 3. REAL GEMINI AI INTEGRATION (SAFE MODE)
 // ==========================================
 
-// ⚠️ IMPORTANT: DELETE "PASTE_YOUR_BASE64_TEXT_HERE" AND PASTE YOUR LONG BASE64 TEXT INSIDE THE QUOTES
-const ENCODED_API_KEY = "QVEuQWI4Uk42SzhOZUR5RU9FaGNfQ1h5UEcwUEJYWWR4T1JUanFxM0dSZmZyOXVJeHlXcmc="; 
+let GEMINI_API_KEY = "";
 
-// This decodes it back to the real API key when the app runs
-const GEMINI_API_KEY = atob(ENCODED_API_KEY);
+try {
+  // ⚠️ IMPORTANT: DELETE "PASTE_YOUR_BASE64_TEXT_HERE" AND PASTE YOUR LONG BASE64 TEXT INSIDE THE QUOTES
+  const ENCODED_API_KEY = "QVEuQWI4Uk42SzhOZUR5RU9FaGNfQ1h5UEcwUEJYWWR4T1JUanFxM0dSZmZyOXVJeHlXcmc="; 
+  
+  // This decodes it back to the real API key when the app runs
+  GEMINI_API_KEY = atob(ENCODED_API_KEY);
+} catch (error) {
+  console.error("Base64 decoding failed. Tabs will still work, but AI won't.", error);
+}
 
 // Helper function to call Gemini AI
 async function callGeminiAI(prompt) {
+  if (!GEMINI_API_KEY) {
+    return "️ AI Key is missing or invalid. Please check the code.";
+  }
+
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
   
   try {
@@ -104,11 +114,9 @@ document.getElementById('suggestBtn').addEventListener('click', async () => {
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const today = days[new Date().getDay()];
 
-  // Create a list of user's clothes
   const myClothes = items.map(i => `${i.name} (${i.category})`).join(', ');
   const clothesList = myClothes || "No clothes in wardrobe";
 
-  // Create the prompt for AI
   const prompt = `
     Today is ${today}. 
     My wardrobe has these items: ${clothesList}. 
@@ -117,10 +125,7 @@ document.getElementById('suggestBtn').addEventListener('click', async () => {
     Format the response clearly with emojis.
   `;
 
-  // Get AI response
   const aiResponse = await callGeminiAI(prompt);
-  
-  // Display AI response
   result.innerHTML = `<div class="suggestion"><h3>📅 Today is ${today}</h3><p style="white-space: pre-wrap;">${aiResponse}</p></div>`;
 });
 
@@ -134,48 +139,7 @@ document.getElementById('askBtn').addEventListener('click', async () => {
     return;
   }
 
-  ans.textContent = "🤖 AI is thinking...";
-
-  const myClothes = items.map(i => `${i.name} (${i.category})`).join(', ');
-  
-  const prompt = `
-    You are StyleSense, an expert AI fashion stylist.
-    My wardrobe has: ${myClothes || "nothing"}.
-    User Question: "${q}"
-    Please give a helpful, stylish, and confident answer.
-  `;
-
-  const aiResponse = await callGeminiAI(prompt);
-  ans.textContent = aiResponse;
-});  const clothesList = myClothes || "No clothes in wardrobe";
-
-  // Create the prompt for AI
-  const prompt = `
-    Today is ${today}. 
-    My wardrobe has these items: ${clothesList}. 
-    Please suggest the best outfit for today from my wardrobe. 
-    Tell me why it's a good choice for ${today} and what vibe it gives. 
-    Format the response clearly with emojis.
-  `;
-
-  // Get AI response
-  const aiResponse = await callGeminiAI(prompt);
-  
-  // Display AI response
-  result.innerHTML = `<div class="suggestion"><h3>📅 Today is ${today}</h3><p style="white-space: pre-wrap;">${aiResponse}</p></div>`;
-});
-
-// REAL AI Stylist Chat
-document.getElementById('askBtn').addEventListener('click', async () => {
-  const q = document.getElementById('stylistQuestion').value.trim();
-  const ans = document.getElementById('stylistAnswer');
-  
-  if (!q) {
-    ans.textContent = "Please type a question first!";
-    return;
-  }
-
-  ans.textContent = "🤖 AI is thinking...";
+  ans.textContent = " AI is thinking...";
 
   const myClothes = items.map(i => `${i.name} (${i.category})`).join(', ');
   
