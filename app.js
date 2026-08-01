@@ -74,39 +74,27 @@ try {
 
 // Helper function to call Gemini AI
 async function callGeminiAI(prompt) {
-  // Debug check: Tell us what the app actually sees
-  const keyPreview = GEMINI_API_KEY ? GEMINI_API_KEY.substring(0, 10) + "..." : "EMPTY";
-  
-  if (!GEMINI_API_KEY || !GEMINI_API_KEY.startsWith("AIzaSy")) {
-    return `🚫 Invalid Key! The app reads the key starting as: "${keyPreview}". It MUST start with "AIzaSy". Please check your Base64 text.`;
-  }
-
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-  
   try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
-      })
+    const response = await fetch("/api/gemini", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ prompt })
     });
-    
-    const text = await response.text();
-    
-    if (!response.ok) {
-      return `🚫 API Error (Status ${response.status}): The key starting with "${keyPreview}" is invalid or was deleted by Google.`;
+
+    const data = await response.json();
+
+    if (data.error) {
+      return "❌ " + data.error;
     }
-    
-    const data = JSON.parse(text);
-    
-    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
-      return data.candidates[0].content.parts[0].text;
-    } else {
-      return `❌ Unexpected response: ${text}`;
-    }
-  } catch (error) {
-    return `❌ Network Error: ${error.message}`;
+
+    return (
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "No response from AI."
+    );
+  } catch (err) {
+    return "❌ " + err.message;
   }
 }
 
