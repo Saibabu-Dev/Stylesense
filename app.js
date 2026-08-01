@@ -55,106 +55,81 @@ window.deleteItem = function(id) {
   renderWardrobe();
 };
 
-// 3. SMART Outfit Suggestion with Day & Reason
-document.getElementById('suggestBtn').addEventListener('click', () => {
-  const result = document.getElementById('outfitResult');
+// ==========================================
+// 3. REAL GEMINI AI INTEGRATION
+// ==========================================
+
+// ⚠️ IMPORTANT: PASTE YOUR API KEY INSIDE THE QUOTES BELOW
+const GEMINI_API_KEY = "YOUR_API_KEY_HERE"; 
+
+// Helper function to call Gemini AI
+async function callGeminiAI(prompt) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
   
-  // Get current day
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }]
+      })
+    });
+    const data = await response.json();
+    return data.candidates[0].content.parts[0].text;
+  } catch (error) {
+    return "AI Error: Please check your API key or internet connection.";
+  }
+}
+
+// SMART Outfit Suggestion with AI
+document.getElementById('suggestBtn').addEventListener('click', async () => {
+  const result = document.getElementById('outfitResult');
+  result.innerHTML = '<p>🤖 AI is thinking... Please wait...</p>';
+
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const today = days[new Date().getDay()];
+
+  // Create a list of user's clothes
+  const myClothes = items.map(i => `${i.name} (${i.category})`).join(', ');
+  const clothesList = myClothes || "No clothes in wardrobe";
+
+  // Create the prompt for AI
+  const prompt = `
+    Today is ${today}. 
+    My wardrobe has these items: ${clothesList}. 
+    Please suggest the best outfit for today from my wardrobe. 
+    Tell me why it's a good choice for ${today} and what vibe it gives. 
+    Format the response clearly with emojis.
+  `;
+
+  // Get AI response
+  const aiResponse = await callGeminiAI(prompt);
   
-  // Day-specific suggestions
-  const dayInfo = {
-    'Monday': {
-      special: 'Start of the work week! Fresh energy needed.',
-      occasion: 'Office/College',
-      vibe: 'Professional & Energetic',
-      tip: 'People wear crisp shirts on Mondays to make a strong first impression of the week.'
-    },
-    'Tuesday': {
-      special: 'Productivity day! Time to get things done.',
-      occasion: 'Work/Study Focus',
-      vibe: 'Comfortable & Focused',
-      tip: 'Comfortable clothes help you stay focused on tasks without distractions.'
-    },
-    'Wednesday': {
-      special: 'Mid-week hump day! Halfway there.',
-      occasion: 'Balanced Day',
-      vibe: 'Smart Casual',
-      tip: 'Wednesday calls for a balanced look - not too formal, not too casual.'
-    },
-    'Thursday': {
-      special: 'Almost weekend! Pre-weekend energy.',
-      occasion: 'Work/Social',
-      vibe: 'Stylish & Confident',
-      tip: 'Thursday is great for trying slightly bolder fashion choices before the weekend.'
-    },
-    'Friday': {
-      special: 'TGIF! Weekend vibes starting.',
-      occasion: 'Casual Friday/Party',
-      vibe: 'Relaxed & Fun',
-      tip: 'Casual Fridays are perfect for jeans and comfortable tees. Evening plans? Dress up!'
-    },
-    'Saturday': {
-      special: 'Weekend! Freedom to express yourself.',
-      occasion: 'Leisure/Party/Shopping',
-      vibe: 'Trendy & Relaxed',
-      tip: 'Saturdays are perfect for that favorite shirt! People dress up to enjoy the day, meet friends, or go out.'
-    },
-    'Sunday': {
-      special: 'Relaxation & Family day.',
-      occasion: 'Rest/Family/Brunch',
-      vibe: 'Comfortable & Casual',
-      tip: 'Sundays are for comfort! Easy clothes for family time, brunch, or just relaxing.'
-    }
-  };
-
-  const info = dayInfo[today];
-  const tops = items.filter(i => i.category === 'shirt' || i.category === 'tshirt');
-  const bottoms = items.filter(i => i.category === 'pants' || i.category === 'jeans');
-  const shoes = items.filter(i => i.category === 'shoes');
-
-  if (tops.length > 0 && bottoms.length > 0) {
-    const randomTop = tops[Math.floor(Math.random() * tops.length)];
-    const randomBottom = bottoms[Math.floor(Math.random() * bottoms.length)];
-    
-    let html = `<div class="suggestion">`;
-    html += `<h3>📅 Today is ${today}</h3>`;
-    html += `<p><strong>✨ Why Special:</strong> ${info.special}</p>`;
-    html += `<p><strong>🎯 Occasion:</strong> ${info.occasion}</p>`;
-    html += `<p><strong>💫 Vibe:</strong> ${info.vibe}</p>`;
-    html += `<hr style="margin: 10px 0; border: none; border-top: 1px solid #e5e7eb;">`;
-    html += `<p><strong>👔 Today's Outfit:</strong></p>`;
-    html += `<p>Top: <strong>${randomTop.name}</strong></p>`;
-    html += `<p>Bottom: <strong>${randomBottom.name}</strong></p>`;
-    
-    if (shoes.length > 0) {
-      const randomShoes = shoes[Math.floor(Math.random() * shoes.length)];
-      html += `<p>Shoes: <strong>${randomShoes.name}</strong></p>`;
-    }
-    
-    html += `<p style="margin-top: 10px; font-style: italic; color: #6b7280;"> <strong>Why this works:</strong> ${info.tip}</p>`;
-    html += `<p style="margin-top: 8px; font-size: 12px; color: #10b981;">✅ Many people wear similar outfits on ${today}s because it matches the day's energy!</p>`;
-    html += `</div>`;
-    
-    result.innerHTML = html;
-  } else {
-    result.innerHTML = `<div class="suggestion"><h3>📅 Today is ${today}</h3><p><strong>${info.special}</strong></p><p style="color: #ef4444; margin-top: 10px;">Please add at least one Top (Shirt/T-shirt) and one Bottom (Pants/Jeans) to your wardrobe!</p></div>`;
-  }
+  // Display AI response
+  result.innerHTML = `<div class="suggestion"><h3>📅 Today is ${today}</h3><p style="white-space: pre-wrap;">${aiResponse}</p></div>`;
 });
 
-// 4. Basic AI Stylist
-document.getElementById('askBtn').addEventListener('click', () => {
-  const q = document.getElementById('stylistQuestion').value.toLowerCase();
+// REAL AI Stylist Chat
+document.getElementById('askBtn').addEventListener('click', async () => {
+  const q = document.getElementById('stylistQuestion').value.trim();
   const ans = document.getElementById('stylistAnswer');
   
-  if (q.includes('interview')) {
-    ans.textContent = "For an interview, wear a crisp shirt, formal trousers, and clean shoes. Keep it simple and professional!";
-  } else if (q.includes('party')) {
-    ans.textContent = "For a party, try a stylish t-shirt or casual shirt with dark jeans and nice sneakers.";
-  } else if (q.includes('college')) {
-    ans.textContent = "For college, a comfortable t-shirt, jeans, and sneakers are perfect.";
-  } else {
-    ans.textContent = "I'm learning! For now, try wearing what makes you feel confident. Real AI coming soon!";
+  if (!q) {
+    ans.textContent = "Please type a question first!";
+    return;
   }
+
+  ans.textContent = "🤖 AI is thinking...";
+
+  const myClothes = items.map(i => `${i.name} (${i.category})`).join(', ');
+  
+  const prompt = `
+    You are StyleSense, an expert AI fashion stylist.
+    My wardrobe has: ${myClothes || "nothing"}.
+    User Question: "${q}"
+    Please give a helpful, stylish, and confident answer.
+  `;
+
+  const aiResponse = await callGeminiAI(prompt);
+  ans.textContent = aiResponse;
 });
